@@ -295,8 +295,12 @@ def write_mesh(out_base, tmesh):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('mesh', help='Path to input 3D model file (e.g. mesh.obj)')
-    parser.add_argument('desc', help='Short description of desired model appearance')
+    parser.add_argument('--obj-path', 
+                       required=True,
+                       help='Path to input 3D model file (e.g. mesh.obj)')
+    parser.add_argument('--description',
+                       required=True,
+                       help='Short description of desired model appearance')
     parser.add_argument(
         '--image-model',
         help='SD 1.5-based model for texture image gen',
@@ -321,14 +325,13 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-
     os.makedirs(args.output_dir, exist_ok=True)
-    mesh = o3d.io.read_triangle_mesh(args.mesh)
+    mesh = o3d.io.read_triangle_mesh(args.obj_path)
     out_base = os.path.join(args.output_dir, 'mesh')
 
     tmesh = text2texture(
         mesh=mesh,
-        desc=args.desc,
+        desc=args.description,
         steps=args.steps,
         depth_txt2img_path=os.path.join(os.path.dirname(__file__), 'depth_txt2img.py'),
         img_model=args.image_model,
